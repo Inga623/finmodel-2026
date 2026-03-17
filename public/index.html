@@ -186,10 +186,10 @@
     <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Ozon: <strong id="pctVarOz" class="panel-val">—</strong>%</p>
     <hr>
     <h3>Ликвидность</h3>
-    <label>Остаток кэша на начало года, ₽ <strong id="valOpeningCash" class="panel-val">16 181 932</strong>
+    <label>Остаток кэша на начало, ₽ <strong id="valOpeningCash" class="panel-val">16 181 932</strong>
       <input type="number" id="openingCashBalance" min="0" step="100000" value="16181932" style="width:100%;padding:6px;margin-top:4px;background:#0c1224;color:#e8ecf3;border:1px solid #273058;border-radius:6px;box-sizing:border-box;">
     </label>
-    <label>Приход в январе (выручка за дек. прошлого года), ₽ <strong id="valOpeningInflow" class="panel-val">0</strong>
+    <label>Приход в первом месяце, ₽ <strong id="valOpeningInflow" class="panel-val">0</strong>
       <input type="number" id="openingInflow" min="0" step="100000" value="0" style="width:100%;padding:6px;margin-top:4px;background:#0c1224;color:#e8ecf3;border:1px solid #273058;border-radius:6px;box-sizing:border-box;">
     </label>
     <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Мин. остаток кэша за год: <strong id="valMinCash" class="panel-val">—</strong></p>
@@ -243,12 +243,37 @@
 
   <!-- ================= ТАБЛИЦА ================= -->
   <div class="table-wrap">
-    <div style="margin-bottom:8px;">
+    <div style="margin-bottom:8px; display:flex; flex-wrap:wrap; gap:16px; align-items:center;">
       <label style="display:inline-flex;align-items:center;gap:8px;">
         <span style="color:#9aa4c7;">Вид отчёта:</span>
         <select id="reportView" style="width:auto;">
           <option value="full">Полный</option>
           <option value="owner">Для собственника</option>
+        </select>
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:8px;">
+        <span style="color:#9aa4c7;">Старт плана:</span>
+        <select id="planStartMonth" style="width:auto;">
+          <option value="0">Январь</option>
+          <option value="1">Февраль</option>
+          <option value="2">Март</option>
+          <option value="3">Апрель</option>
+          <option value="4">Май</option>
+          <option value="5">Июнь</option>
+          <option value="6">Июль</option>
+          <option value="7">Август</option>
+          <option value="8">Сентябрь</option>
+          <option value="9">Октябрь</option>
+          <option value="10">Ноябрь</option>
+          <option value="11">Декабрь</option>
+        </select>
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:8px;">
+        <span style="color:#9aa4c7;">Период:</span>
+        <select id="planPeriod" style="width:auto;">
+          <option value="6">6 месяцев</option>
+          <option value="12" selected>12 месяцев</option>
+          <option value="toYearEnd">До конца года</option>
         </select>
       </label>
     </div>

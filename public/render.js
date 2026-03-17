@@ -123,6 +123,59 @@ function render() {
     return;
   }
 
+  // Применяем выбранный диапазон месяцев для отображения (таблица, KPI, графики)
+  const startSel = document.getElementById('planStartMonth');
+  const periodSel = document.getElementById('planPeriod');
+  const totalMonths = data.months.length;
+  let startIdx = 0;
+  if (startSel) {
+    const v = Number(startSel.value);
+    if (Number.isInteger(v) && v >= 0 && v < totalMonths) startIdx = v;
+  }
+  let endIdx = totalMonths - 1;
+  if (periodSel) {
+    const p = periodSel.value;
+    if (p === '6') endIdx = Math.min(totalMonths - 1, startIdx + 6 - 1);
+    else if (p === '12') endIdx = Math.min(totalMonths - 1, startIdx + 12 - 1);
+    else if (p === 'toYearEnd') endIdx = totalMonths - 1;
+  }
+  if (endIdx < startIdx) endIdx = startIdx;
+
+  const sliceArr = (arr) => Array.isArray(arr) ? arr.slice(startIdx, endIdx + 1) : arr;
+  const sliceDeep = (obj) => {
+    if (!obj || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return sliceArr(obj);
+    const res = {};
+    for (const k in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, k)) {
+        res[k] = sliceDeep(obj[k]);
+      }
+    }
+    return res;
+  };
+
+  if (startIdx !== 0 || endIdx !== totalMonths - 1) {
+    const view = { ...data };
+    view.months = sliceArr(data.months);
+    view.orders = sliceDeep(data.orders);
+    view.orderSum = sliceDeep(data.orderSum);
+    view.season = sliceDeep(data.season);
+    view.buyoutRatePct = sliceDeep(data.buyoutRatePct);
+    view.buyouts = sliceDeep(data.buyouts);
+    view.revenue = sliceDeep(data.revenue);
+    view.variable = sliceDeep(data.variable);
+    view.margin = sliceDeep(data.margin);
+    view.opex = sliceDeep(data.opex);
+    view.net = sliceDeep(data.net);
+    view.taxBase = sliceDeep(data.taxBase);
+    view.taxBaseCumul = sliceArr(data.taxBaseCumul);
+    view.vat7 = sliceArr(data.vat7);
+    view.vat22 = sliceArr(data.vat22);
+    if (data.cash) view.cash = sliceDeep(data.cash);
+    if (data.cashFlow) view.cashFlow = sliceDeep(data.cashFlow);
+    data = view;
+  }
+
   // Годовые итоги
   const sumArr = (arr) => arr.reduce((a, b) => a + b, 0);
   const totalRevenue = sumArr(data.revenue.total);

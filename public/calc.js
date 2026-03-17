@@ -201,21 +201,33 @@ function calculateModel_v1(params) {
 
     const totalOpex = fot + (otherOpex || 0);
     const opProfit = totalMargin - totalOpex;
-    const usn = totalRevenue * (usnRate != null ? usnRate : 0.02);
-    const netProfit = opProfit - usn;
-    cumulative += netProfit;
+    let usn = totalRevenue * (usnRate != null ? usnRate : 0.02);
 
     const taxBaseWb = wbRevenue * 0.65;
     const taxBaseOz = ozRevenue * 0.5;
     const taxBaseTotal = taxBaseWb + taxBaseOz;
     cumulativeTaxBase += taxBaseTotal;
-    const vat7Month = taxBaseTotal * 0.07;
+
+    // До достижения лимита НБ: НДС 7%, УСН по ставке.
+    // После достижения лимита: НДС 22% со всей базы, УСН = 0.
+    let vat7Month = 0;
+    let vat22Month = 0;
+    if (cumulativeTaxBase <= TAX_BASE_LIMIT) {
+      vat7Month = taxBaseTotal * 0.07;
+    } else {
+      usn = 0;
+      vat22Month = taxBaseTotal * 0.22;
+    }
+
+    const netProfit = opProfit - usn;
+    cumulative += netProfit;
 
     modelData.taxBase.wb.push(taxBaseWb);
     modelData.taxBase.oz.push(taxBaseOz);
     modelData.taxBase.total.push(taxBaseTotal);
     modelData.taxBaseCumul.push(cumulativeTaxBase);
     modelData.vat7.push(vat7Month);
+    modelData.vat22.push(vat22Month);
 
     revenueByMonth.push(totalRevenue);
     variableTotalByMonth.push(wbVarTotal + ozVarTotal);
@@ -266,13 +278,6 @@ function calculateModel_v1(params) {
     modelData.net.usn.push(usn);
     modelData.net.profit.push(netProfit);
     modelData.net.cumulative.push(cumulative);
-  }
-
-  // НДС 22% с части НБ, превышающей лимит 490,5 млн (нарастающим итогом)
-  for (let i = 0; i < 12; i++) {
-    const excessPrev = i === 0 ? 0 : Math.max(0, modelData.taxBaseCumul[i - 1] - TAX_BASE_LIMIT);
-    const excessNow = Math.max(0, modelData.taxBaseCumul[i] - TAX_BASE_LIMIT);
-    modelData.vat22.push((excessNow - excessPrev) * 0.22);
   }
 
   // Точка безубыточности: месяц выхода в ноль и безубыточная выручка в месяц

@@ -67,43 +67,46 @@ function render() {
     const v = el ? parseFloat(el.value) : NaN;
     return Number.isFinite(v) ? v : [0.76,0.63,0.59,0.54,0.50,0.52,0.61,0.80,1.06,1.40,1.69,1.80][i];
   });
+  const wbAdsEl = document.getElementById('wbAds');
+  const ozAdsEl = document.getElementById('ozAds');
   const wbAdsByMonth = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => {
     const el = document.getElementById('wbAds' + i);
     const v = el ? parseFloat(el.value) : NaN;
-    return Number.isFinite(v) ? v : +wbAds.value;
+    return Number.isFinite(v) ? v : (wbAdsEl ? +wbAdsEl.value : 12);
   });
   const ozAdsByMonth = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => {
     const el = document.getElementById('ozAds' + i);
     const v = el ? parseFloat(el.value) : NaN;
-    return Number.isFinite(v) ? v : +ozAds.value;
+    return Number.isFinite(v) ? v : (ozAdsEl ? +ozAdsEl.value : 12);
   });
 
+  const get = (id) => document.getElementById(id);
   const params = {
-    wbPrice: +wbPrice.value,
-    wbOrders: +(document.getElementById('wbOrders') && document.getElementById('wbOrders').value) || 21100,
-    wbBuyoutRate: +(document.getElementById('wbBuyoutRate') && document.getElementById('wbBuyoutRate').value) || 100,
-    wbFee: +wbFee.value,
-    wbCost: +wbCost.value,
-    wbAds: +wbAds.value,
+    wbPrice: +(get('wbPrice') && get('wbPrice').value) || 2310,
+    wbOrders: +(get('wbOrders') && get('wbOrders').value) || 21100,
+    wbBuyoutRate: +(get('wbBuyoutRate') && get('wbBuyoutRate').value) || 100,
+    wbFee: +(get('wbFee') && get('wbFee').value) || 30,
+    wbCost: +(get('wbCost') && get('wbCost').value) || 15,
+    wbAds: +(get('wbAds') && get('wbAds').value) || 12,
     wbAdsByMonth,
     ozAdsByMonth,
-    wbLogisticsPct: +(document.getElementById('wbLogisticsPct') && document.getElementById('wbLogisticsPct').value) || 2,
-    ozPrice: +ozPrice.value,
-    ozOrders: +(document.getElementById('ozOrders') && document.getElementById('ozOrders').value) || 25000,
-    ozBuyoutRate: +(document.getElementById('ozBuyoutRate') && document.getElementById('ozBuyoutRate').value) || 100,
-    ozFee: +ozFee.value,
-    ozCost: +ozCost.value,
-    ozAds: +ozAds.value,
-    ozLogisticsPct: +(document.getElementById('ozLogisticsPct') && document.getElementById('ozLogisticsPct').value) || 3,
+    wbLogisticsPct: +(get('wbLogisticsPct') && get('wbLogisticsPct').value) || 2,
+    ozPrice: +(get('ozPrice') && get('ozPrice').value) || 3200,
+    ozOrders: +(get('ozOrders') && get('ozOrders').value) || 25000,
+    ozBuyoutRate: +(get('ozBuyoutRate') && get('ozBuyoutRate').value) || 100,
+    ozFee: +(get('ozFee') && get('ozFee').value) || 37,
+    ozCost: +(get('ozCost') && get('ozCost').value) || 13,
+    ozAds: +(get('ozAds') && get('ozAds').value) || 12,
+    ozLogisticsPct: +(get('ozLogisticsPct') && get('ozLogisticsPct').value) || 3,
     wbSeason,
     ozSeason,
-    fot: +fot.value,
-    otherOpex: +document.getElementById('otherOpex').value,
-    usnRate: +document.getElementById('usnRate').value,
-    revenueLag: +document.getElementById('revenueLag').value,
-    openingCashBalance: +(document.getElementById('openingCashBalance') && document.getElementById('openingCashBalance').value) || 16181932,
-    openingInflow: +(document.getElementById('openingInflow') && document.getElementById('openingInflow').value) || 0,
-    scenario: scenario.value
+    fot: +(get('fot') && get('fot').value) || 2300000,
+    otherOpex: +(get('otherOpex') && get('otherOpex').value) || 1480000,
+    usnRate: +(get('usnRate') && get('usnRate').value) || 0.06,
+    revenueLag: +(get('revenueLag') && get('revenueLag').value) || 1,
+    openingCashBalance: +(get('openingCashBalance') && get('openingCashBalance').value) || 16181932,
+    openingInflow: +(get('openingInflow') && get('openingInflow').value) || 0,
+    scenario: (get('scenario') && get('scenario').value) || 'base'
   };
 
   let data;
@@ -434,38 +437,41 @@ function rowWithNegativeHighlight(name, arr, bold = false) {
 }
 
 function getParams() {
-  const wbOrdersEl = document.getElementById('wbOrders');
-  const wbBuyoutEl = document.getElementById('wbBuyoutRate');
-  const ozOrdersEl = document.getElementById('ozOrders');
-  const ozBuyoutEl = document.getElementById('ozBuyoutRate');
-  const wbSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(document.getElementById('wbSeason' + i)?.value) || 0);
-  const ozSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(document.getElementById('ozSeason' + i)?.value) || 0);
+  const g = (id) => document.getElementById(id);
+  const wbOrdersEl = g('wbOrders');
+  const wbBuyoutEl = g('wbBuyoutRate');
+  const ozOrdersEl = g('ozOrders');
+  const ozBuyoutEl = g('ozBuyoutRate');
+  const wbAdsEl = g('wbAds');
+  const ozAdsEl = g('ozAds');
+  const wbSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(g('wbSeason' + i)?.value) || 0);
+  const ozSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(g('ozSeason' + i)?.value) || 0);
   return {
-    wbPrice: +wbPrice.value,
+    wbPrice: +(g('wbPrice')?.value) || 2310,
     wbOrders: wbOrdersEl ? +wbOrdersEl.value : 21100,
     wbBuyoutRate: wbBuyoutEl ? +wbBuyoutEl.value : 100,
-    wbFee: +wbFee.value,
-    wbCost: +wbCost.value,
-    wbAds: +wbAds.value,
-    wbAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(document.getElementById('wbAds' + i)?.value); return Number.isFinite(v) ? v : +wbAds.value; }),
-    ozAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(document.getElementById('ozAds' + i)?.value); return Number.isFinite(v) ? v : +ozAds.value; }),
-    wbLogisticsPct: +(document.getElementById('wbLogisticsPct')?.value) || 2,
-    ozPrice: +ozPrice.value,
+    wbFee: +(g('wbFee')?.value) || 30,
+    wbCost: +(g('wbCost')?.value) || 15,
+    wbAds: +(wbAdsEl?.value) || 12,
+    wbAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(g('wbAds' + i)?.value); return Number.isFinite(v) ? v : +(wbAdsEl?.value) || 12; }),
+    ozAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(g('ozAds' + i)?.value); return Number.isFinite(v) ? v : +(ozAdsEl?.value) || 12; }),
+    wbLogisticsPct: +(g('wbLogisticsPct')?.value) || 2,
+    ozPrice: +(g('ozPrice')?.value) || 3200,
     ozOrders: ozOrdersEl ? +ozOrdersEl.value : 25000,
     ozBuyoutRate: ozBuyoutEl ? +ozBuyoutEl.value : 100,
-    ozFee: +ozFee.value,
-    ozCost: +ozCost.value,
-    ozAds: +ozAds.value,
-    ozLogisticsPct: +(document.getElementById('ozLogisticsPct')?.value) || 3,
+    ozFee: +(g('ozFee')?.value) || 37,
+    ozCost: +(g('ozCost')?.value) || 13,
+    ozAds: +(ozAdsEl?.value) || 12,
+    ozLogisticsPct: +(g('ozLogisticsPct')?.value) || 3,
     wbSeason: wbSeason.every(v => v > 0) ? wbSeason : undefined,
     ozSeason: ozSeason.every(v => v > 0) ? ozSeason : undefined,
-    fot: +fot.value,
-    otherOpex: +document.getElementById('otherOpex').value,
-    usnRate: +document.getElementById('usnRate').value,
-    revenueLag: +document.getElementById('revenueLag').value,
-    openingCashBalance: +(document.getElementById('openingCashBalance')?.value) || 16181932,
-    openingInflow: +(document.getElementById('openingInflow')?.value) || 0,
-    scenario: scenario.value
+    fot: +(g('fot')?.value) || 2300000,
+    otherOpex: +(g('otherOpex')?.value) || 1480000,
+    usnRate: +(g('usnRate')?.value) || 0.06,
+    revenueLag: +(g('revenueLag')?.value) || 1,
+    openingCashBalance: +(g('openingCashBalance')?.value) || 16181932,
+    openingInflow: +(g('openingInflow')?.value) || 0,
+    scenario: (g('scenario')?.value) || 'base'
   };
 }
 
@@ -474,52 +480,53 @@ const defaultOzSeason = [0.76,0.63,0.59,0.54,0.50,0.52,0.61,0.80,1.06,1.40,1.69,
 
 function setParams(p) {
   if (!p) return;
-  if (p.wbPrice != null) wbPrice.value = p.wbPrice;
-  const wbOrdersEl = document.getElementById('wbOrders');
-  const wbBuyoutEl = document.getElementById('wbBuyoutRate');
+  const g = (id) => document.getElementById(id);
+  if (p.wbPrice != null) { const el = g('wbPrice'); if (el) el.value = p.wbPrice; }
+  const wbOrdersEl = g('wbOrders');
+  const wbBuyoutEl = g('wbBuyoutRate');
   if (p.wbOrders != null && wbOrdersEl) wbOrdersEl.value = p.wbOrders;
   else if (p.wbQty != null && wbOrdersEl) { wbOrdersEl.value = p.wbQty; if (wbBuyoutEl) wbBuyoutEl.value = 100; }
   if (p.wbBuyoutRate != null && wbBuyoutEl) wbBuyoutEl.value = p.wbBuyoutRate;
-  if (p.wbFee != null) wbFee.value = p.wbFee;
-  if (p.wbCost != null) wbCost.value = p.wbCost;
-  if (p.wbAds != null) wbAds.value = p.wbAds;
+  if (p.wbFee != null) { const el = g('wbFee'); if (el) el.value = p.wbFee; }
+  if (p.wbCost != null) { const el = g('wbCost'); if (el) el.value = p.wbCost; }
+  if (p.wbAds != null) { const el = g('wbAds'); if (el) el.value = p.wbAds; }
   if (Array.isArray(p.wbAdsByMonth) && p.wbAdsByMonth.length === 12) {
-    p.wbAdsByMonth.forEach((v, i) => { const el = document.getElementById('wbAds' + i); if (el) el.value = v != null ? v : ''; });
+    p.wbAdsByMonth.forEach((v, i) => { const el = g('wbAds' + i); if (el) el.value = v != null ? v : ''; });
   }
-  const wbLogEl = document.getElementById('wbLogisticsPct');
+  const wbLogEl = g('wbLogisticsPct');
   if (p.wbLogisticsPct != null && wbLogEl) wbLogEl.value = p.wbLogisticsPct;
-  if (p.ozPrice != null) ozPrice.value = p.ozPrice;
-  const ozOrdersEl = document.getElementById('ozOrders');
-  const ozBuyoutEl = document.getElementById('ozBuyoutRate');
+  if (p.ozPrice != null) { const el = g('ozPrice'); if (el) el.value = p.ozPrice; }
+  const ozOrdersEl = g('ozOrders');
+  const ozBuyoutEl = g('ozBuyoutRate');
   if (p.ozOrders != null && ozOrdersEl) ozOrdersEl.value = p.ozOrders;
   else if (p.ozQty != null && ozOrdersEl) { ozOrdersEl.value = p.ozQty; if (ozBuyoutEl) ozBuyoutEl.value = 100; }
   if (p.ozBuyoutRate != null && ozBuyoutEl) ozBuyoutEl.value = p.ozBuyoutRate;
-  if (p.ozFee != null) ozFee.value = p.ozFee;
-  if (p.ozCost != null) ozCost.value = p.ozCost;
-  if (p.ozAds != null) ozAds.value = p.ozAds;
+  if (p.ozFee != null) { const el = g('ozFee'); if (el) el.value = p.ozFee; }
+  if (p.ozCost != null) { const el = g('ozCost'); if (el) el.value = p.ozCost; }
+  if (p.ozAds != null) { const el = g('ozAds'); if (el) el.value = p.ozAds; }
   if (Array.isArray(p.ozAdsByMonth) && p.ozAdsByMonth.length === 12) {
-    p.ozAdsByMonth.forEach((v, i) => { const el = document.getElementById('ozAds' + i); if (el) el.value = v != null ? v : ''; });
+    p.ozAdsByMonth.forEach((v, i) => { const el = g('ozAds' + i); if (el) el.value = v != null ? v : ''; });
   }
-  const ozLogEl = document.getElementById('ozLogisticsPct');
+  const ozLogEl = g('ozLogisticsPct');
   if (p.ozLogisticsPct != null && ozLogEl) ozLogEl.value = p.ozLogisticsPct;
   if (Array.isArray(p.wbSeason) && p.wbSeason.length === 12) {
-    p.wbSeason.forEach((v, i) => { const el = document.getElementById('wbSeason' + i); if (el) el.value = v; });
+    p.wbSeason.forEach((v, i) => { const el = g('wbSeason' + i); if (el) el.value = v; });
   }
   if (Array.isArray(p.ozSeason) && p.ozSeason.length === 12) {
-    p.ozSeason.forEach((v, i) => { const el = document.getElementById('ozSeason' + i); if (el) el.value = v; });
+    p.ozSeason.forEach((v, i) => { const el = g('ozSeason' + i); if (el) el.value = v; });
   }
-  if (p.fot != null) fot.value = p.fot;
-  const oo = document.getElementById('otherOpex');
-  const ur = document.getElementById('usnRate');
-  const rl = document.getElementById('revenueLag');
-  const ocb = document.getElementById('openingCashBalance');
-  const oci = document.getElementById('openingInflow');
+  if (p.fot != null) { const el = g('fot'); if (el) el.value = p.fot; }
+  const oo = g('otherOpex');
+  const ur = g('usnRate');
+  const rl = g('revenueLag');
+  const ocb = g('openingCashBalance');
+  const oci = g('openingInflow');
   if (oo && p.otherOpex != null) oo.value = p.otherOpex;
   if (ur && p.usnRate != null) ur.value = String(p.usnRate);
   if (rl && p.revenueLag != null) rl.value = String(p.revenueLag);
   if (ocb && p.openingCashBalance != null) ocb.value = p.openingCashBalance;
   if (oci && p.openingInflow != null) oci.value = p.openingInflow;
-  if (p.scenario != null) scenario.value = p.scenario;
+  if (p.scenario != null) { const el = g('scenario'); if (el) el.value = p.scenario; }
   render();
 }
 

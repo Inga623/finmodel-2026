@@ -81,31 +81,35 @@ function render() {
   });
 
   const get = (id) => document.getElementById(id);
+  const numOr = (el, def) => {
+    const v = el ? Number(el.value) : NaN;
+    return Number.isFinite(v) ? v : def;
+  };
   const params = {
-    wbPrice: +(get('wbPrice') && get('wbPrice').value) || 2310,
-    wbOrders: +(get('wbOrders') && get('wbOrders').value) || 21100,
-    wbBuyoutRate: +(get('wbBuyoutRate') && get('wbBuyoutRate').value) || 100,
-    wbFee: +(get('wbFee') && get('wbFee').value) || 30,
-    wbCost: +(get('wbCost') && get('wbCost').value) || 15,
-    wbAds: +(get('wbAds') && get('wbAds').value) || 12,
+    wbPrice: numOr(get('wbPrice'), 2310),
+    wbOrders: numOr(get('wbOrders'), 21100),
+    wbBuyoutRate: numOr(get('wbBuyoutRate'), 100),
+    wbFee: numOr(get('wbFee'), 30),
+    wbCost: numOr(get('wbCost'), 15),
+    wbAds: numOr(get('wbAds'), 12),
     wbAdsByMonth,
     ozAdsByMonth,
-    wbLogisticsPct: +(get('wbLogisticsPct') && get('wbLogisticsPct').value) || 2,
-    ozPrice: +(get('ozPrice') && get('ozPrice').value) || 3200,
-    ozOrders: +(get('ozOrders') && get('ozOrders').value) || 25000,
-    ozBuyoutRate: +(get('ozBuyoutRate') && get('ozBuyoutRate').value) || 100,
-    ozFee: +(get('ozFee') && get('ozFee').value) || 37,
-    ozCost: +(get('ozCost') && get('ozCost').value) || 13,
-    ozAds: +(get('ozAds') && get('ozAds').value) || 12,
-    ozLogisticsPct: +(get('ozLogisticsPct') && get('ozLogisticsPct').value) || 3,
+    wbLogisticsPct: numOr(get('wbLogisticsPct'), 2),
+    ozPrice: numOr(get('ozPrice'), 3200),
+    ozOrders: numOr(get('ozOrders'), 25000),
+    ozBuyoutRate: numOr(get('ozBuyoutRate'), 100),
+    ozFee: numOr(get('ozFee'), 37),
+    ozCost: numOr(get('ozCost'), 13),
+    ozAds: numOr(get('ozAds'), 12),
+    ozLogisticsPct: numOr(get('ozLogisticsPct'), 3),
     wbSeason,
     ozSeason,
-    fot: +(get('fot') && get('fot').value) || 2300000,
-    otherOpex: +(get('otherOpex') && get('otherOpex').value) || 1480000,
-    usnRate: +(get('usnRate') && get('usnRate').value) || 0.06,
-    revenueLag: +(get('revenueLag') && get('revenueLag').value) || 1,
-    openingCashBalance: +(get('openingCashBalance') && get('openingCashBalance').value) || 16181932,
-    openingInflow: +(get('openingInflow') && get('openingInflow').value) || 0,
+    fot: numOr(get('fot'), 2300000),
+    otherOpex: numOr(get('otherOpex'), 1480000),
+    usnRate: numOr(get('usnRate'), 0.06),
+    revenueLag: numOr(get('revenueLag'), 1),
+    openingCashBalance: numOr(get('openingCashBalance'), 16181932),
+    openingInflow: numOr(get('openingInflow'), 0),
     scenario: (get('scenario') && get('scenario').value) || 'base'
   };
 
@@ -123,14 +127,22 @@ function render() {
   const sumArr = (arr) => arr.reduce((a, b) => a + b, 0);
   const totalRevenue = sumArr(data.revenue.total);
   const totalNet = sumArr(data.net.profit);
+  const totalOpCash = data.cashFlow && data.cashFlow.operating ? sumArr(data.cashFlow.operating) : null;
+  const closingCash = data.cashFlow && data.cashFlow.closing && data.cashFlow.closing.length
+    ? data.cashFlow.closing[data.cashFlow.closing.length - 1]
+    : (data.cash && data.cash.balance && data.cash.balance.length ? data.cash.balance[data.cash.balance.length - 1] : null);
 
   const revEl = document.getElementById('kpiRevenueTotal');
   const netEl = document.getElementById('kpiNetTotal');
+  const cashClosingEl = document.getElementById('kpiCashClosing');
+  const cashOpEl = document.getElementById('kpiCashOperating');
   const revDeltaEl = document.getElementById('kpiRevenueDelta');
   const netDeltaEl = document.getElementById('kpiNetDelta');
 
   if (revEl) revEl.textContent = formatRub(totalRevenue);
   if (netEl) netEl.textContent = formatRub(totalNet);
+  if (cashClosingEl) cashClosingEl.textContent = closingCash != null ? formatRub(closingCash) : '—';
+  if (cashOpEl) cashOpEl.textContent = totalOpCash != null ? formatRub(totalOpCash) : '—';
 
   const rosEl = document.getElementById('kpiROS');
   const structEl = document.getElementById('kpiRevenueStructure');
@@ -260,6 +272,15 @@ function render() {
       ${row("Приход (с лагом)", data.cash.inflow)}
       ${row("Отток", data.cash.outflow)}
       ${rowWithNegativeHighlight("Остаток кэша", data.cash.balance, true)}
+      ` : ''}
+
+      ${data.cashFlow ? `
+      <tr class="section"><td colspan="${data.months.length + 2}">БДДС (движение денег)</td></tr>
+      ${row("Операционный денежный поток", data.cashFlow.operating, true)}
+      ${row("Инвестиционный денежный поток", data.cashFlow.investing)}
+      ${row("Финансовый денежный поток", data.cashFlow.financing)}
+      ${row("Чистый денежный поток", data.cashFlow.net)}
+      ${rowWithNegativeHighlight("Остаток денег на конец месяца", data.cashFlow.closing, true)}
       ` : ''}
     </tbody>
   `;
@@ -438,6 +459,10 @@ function rowWithNegativeHighlight(name, arr, bold = false) {
 
 function getParams() {
   const g = (id) => document.getElementById(id);
+  const numOr = (el, def) => {
+    const v = el ? Number(el.value) : NaN;
+    return Number.isFinite(v) ? v : def;
+  };
   const wbOrdersEl = g('wbOrders');
   const wbBuyoutEl = g('wbBuyoutRate');
   const ozOrdersEl = g('ozOrders');
@@ -447,30 +472,30 @@ function getParams() {
   const wbSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(g('wbSeason' + i)?.value) || 0);
   const ozSeason = [0,1,2,3,4,5,6,7,8,9,10,11].map(i => parseFloat(g('ozSeason' + i)?.value) || 0);
   return {
-    wbPrice: +(g('wbPrice')?.value) || 2310,
-    wbOrders: wbOrdersEl ? +wbOrdersEl.value : 21100,
-    wbBuyoutRate: wbBuyoutEl ? +wbBuyoutEl.value : 100,
-    wbFee: +(g('wbFee')?.value) || 30,
-    wbCost: +(g('wbCost')?.value) || 15,
-    wbAds: +(wbAdsEl?.value) || 12,
+    wbPrice: numOr(g('wbPrice'), 2310),
+    wbOrders: numOr(wbOrdersEl, 21100),
+    wbBuyoutRate: numOr(wbBuyoutEl, 100),
+    wbFee: numOr(g('wbFee'), 30),
+    wbCost: numOr(g('wbCost'), 15),
+    wbAds: numOr(wbAdsEl, 12),
     wbAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(g('wbAds' + i)?.value); return Number.isFinite(v) ? v : +(wbAdsEl?.value) || 12; }),
     ozAdsByMonth: [0,1,2,3,4,5,6,7,8,9,10,11].map(i => { const v = parseFloat(g('ozAds' + i)?.value); return Number.isFinite(v) ? v : +(ozAdsEl?.value) || 12; }),
-    wbLogisticsPct: +(g('wbLogisticsPct')?.value) || 2,
-    ozPrice: +(g('ozPrice')?.value) || 3200,
-    ozOrders: ozOrdersEl ? +ozOrdersEl.value : 25000,
-    ozBuyoutRate: ozBuyoutEl ? +ozBuyoutEl.value : 100,
-    ozFee: +(g('ozFee')?.value) || 37,
-    ozCost: +(g('ozCost')?.value) || 13,
-    ozAds: +(ozAdsEl?.value) || 12,
-    ozLogisticsPct: +(g('ozLogisticsPct')?.value) || 3,
+    wbLogisticsPct: numOr(g('wbLogisticsPct'), 2),
+    ozPrice: numOr(g('ozPrice'), 3200),
+    ozOrders: numOr(ozOrdersEl, 25000),
+    ozBuyoutRate: numOr(ozBuyoutEl, 100),
+    ozFee: numOr(g('ozFee'), 37),
+    ozCost: numOr(g('ozCost'), 13),
+    ozAds: numOr(ozAdsEl, 12),
+    ozLogisticsPct: numOr(g('ozLogisticsPct'), 3),
     wbSeason: wbSeason.every(v => v > 0) ? wbSeason : undefined,
     ozSeason: ozSeason.every(v => v > 0) ? ozSeason : undefined,
-    fot: +(g('fot')?.value) || 2300000,
-    otherOpex: +(g('otherOpex')?.value) || 1480000,
-    usnRate: +(g('usnRate')?.value) || 0.06,
-    revenueLag: +(g('revenueLag')?.value) || 1,
-    openingCashBalance: +(g('openingCashBalance')?.value) || 16181932,
-    openingInflow: +(g('openingInflow')?.value) || 0,
+    fot: numOr(g('fot'), 2300000),
+    otherOpex: numOr(g('otherOpex'), 1480000),
+    usnRate: numOr(g('usnRate'), 0.06),
+    revenueLag: numOr(g('revenueLag'), 1),
+    openingCashBalance: numOr(g('openingCashBalance'), 16181932),
+    openingInflow: numOr(g('openingInflow'), 0),
     scenario: (g('scenario')?.value) || 'base'
   };
 }

@@ -22,7 +22,10 @@ document.getElementById('loadScenario').addEventListener('change', async functio
 });
 
 document.querySelectorAll('input, select').forEach(el => {
-  if (el.id !== 'loadScenario' && el.id !== 'scenarioName') el.addEventListener('input', render);
+  if (el.id === 'loadScenario' || el.id === 'scenarioName') return;
+  // Для select в некоторых браузерах 'input' не срабатывает стабильно
+  el.addEventListener('input', render);
+  if (el.tagName === 'SELECT') el.addEventListener('change', render);
 });
 const reportViewEl = document.getElementById('reportView');
 if (reportViewEl) reportViewEl.addEventListener('change', render);

@@ -1,5 +1,5 @@
 (function() {
-  var chartRevenue, chartProfit, chartStructure;
+  var chartRevenue, chartProfit, chartStructure, chartCash;
 
   var months = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
   var opts = {
@@ -89,6 +89,38 @@
           }]
         },
         options: Object.assign({}, opts, { cutout: '55%' })
+      });
+    }
+
+    if (chartCash) chartCash.destroy();
+    var ctxCash = document.getElementById('chartCash');
+    if (ctxCash && data.cash) {
+      var cashSeries = (data.cashFlow && data.cashFlow.closing && data.cashFlow.closing.length)
+        ? data.cashFlow.closing
+        : data.cash.balance;
+      var dividendsSeries = (data.dividends && Array.isArray(data.dividends.byMonth))
+        ? data.dividends.byMonth
+        : months.map(function() { return 0; });
+      chartCash = new Chart(ctxCash, {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [
+            { label: 'Остаток денег', data: cashSeries, borderColor: '#4da3ff', backgroundColor: 'rgba(77, 163, 255, 0.1)', fill: true, tension: 0.2 },
+            { label: 'Дивиденды', data: dividendsSeries, borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0.2, yAxisID: 'y1' }
+          ]
+        },
+        options: Object.assign({}, opts, {
+          scales: {
+            x: opts.scales.x,
+            y: { ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } }) },
+            y1: {
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } })
+            }
+          }
+        })
       });
     }
   };

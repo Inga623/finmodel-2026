@@ -44,6 +44,7 @@
  * @property {number[]} vat7
  * @property {number[]} vat22
  * @property {{ inflow: number[], outflow: number[], balance: number[] }} cash
+ * @property {{ operating: number[], investing: number[], financing: number[], net: number[], closing: number[] }} cashFlow
  * @property {number|null} bepMonth
  * @property {number|null} bepRevenue
  */
@@ -148,7 +149,14 @@ function calculateModel_v1(params) {
     taxBaseCumul: [],
     vat7: [],
     vat22: [],
-    cash: { inflow: [], outflow: [], balance: [] }
+    cash: { inflow: [], outflow: [], balance: [] },
+    cashFlow: {
+      operating: [],
+      investing: [],
+      financing: [],
+      net: [],
+      closing: []
+    }
   };
 
   const TAX_BASE_LIMIT = 490500000; // 490,5 млн — при превышении применяется 22%
@@ -156,6 +164,7 @@ function calculateModel_v1(params) {
 
   const revenueByMonth = [];
   const variableTotalByMonth = [];
+  const costByMonth = [];
   let cumulative = 0;
   let cumulativeTaxBase = 0;
   let cashBalance = openingCashBalance != null ? Number(openingCashBalance) : 16181932;
@@ -210,6 +219,7 @@ function calculateModel_v1(params) {
 
     revenueByMonth.push(totalRevenue);
     variableTotalByMonth.push(wbVarTotal + ozVarTotal);
+    costByMonth.push((wbCostRub || 0) + (ozCostRub || 0));
 
     modelData.orders.wb.push(wbOrdersMonth);
     modelData.orders.oz.push(ozOrdersMonth);
@@ -280,12 +290,28 @@ function calculateModel_v1(params) {
   const lag = Math.min(Math.max(0, revenueLag || 0), 3);
   const inflowJanFromPrevDec = openingInflow != null ? Number(openingInflow) : 0;
   for (let i = 0; i < 12; i++) {
-    const inflow = (i === 0 ? inflowJanFromPrevDec : 0) + (i >= lag ? revenueByMonth[i - lag] : 0);
-    const outflow = (variableTotalByMonth[i] || 0) + fot + (otherOpex || 0) + modelData.net.usn[i];
-    cashBalance += inflow - outflow;
+    const payoutIdx = i - lag;
+    const payoutGross = payoutIdx >= 0 ? (revenueByMonth[payoutIdx] || 0) : 0;
+    // Маркетплейс удерживает переменные (кроме себестоимости) из выплаты, поэтому приход моделируем нетто.
+    const payoutWithheld = payoutIdx >= 0 ? ((variableTotalByMonth[payoutIdx] || 0) - (costByMonth[payoutIdx] || 0)) : 0;
+    const payoutNet = Math.max(0, payoutGross - payoutWithheld);
+    const inflow = (i === 0 ? inflowJanFromPrevDec : 0) + payoutNet;
+    const vatOutflow = (modelData.vat7[i] || 0) + (modelData.vat22[i] || 0);
+    // Отток — только то, что платим сами (ФОТ, прочие, налоги). Переменные удержаны в выплате.
+    const outflow = fot + (otherOpex || 0) + (modelData.net.usn[i] || 0) + vatOutflow;
+    const operatingCF = inflow - outflow;
+
+    cashBalance += operatingCF;
+
     modelData.cash.inflow.push(inflow);
     modelData.cash.outflow.push(outflow);
     modelData.cash.balance.push(cashBalance);
+
+    modelData.cashFlow.operating.push(operatingCF);
+    modelData.cashFlow.investing.push(0);
+    modelData.cashFlow.financing.push(0);
+    modelData.cashFlow.net.push(operatingCF);
+    modelData.cashFlow.closing.push(cashBalance);
   }
 
   return modelData;

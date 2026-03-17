@@ -1,0 +1,16 @@
+{
+  "name": "finmodel-2026",
+  "version": "1.0.0",
+  "description": "Финансовая модель 2026",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

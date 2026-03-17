@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Финансовая модель 2026</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b0f1a;
+      color: #e8ecf3;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    h1 {
+      margin: 20px;
+      font-size: 28px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 24px;
+      padding: 0 20px 30px;
+    }
+
+    /* ===== ПАНЕЛЬ ===== */
+    .panel {
+      width: 320px;
+      background: #11172a;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .panel h3 {
+      margin: 12px 0 6px;
+      color: #4da3ff;
+      font-size: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-top: 10px;
+      color: #9aa4c7;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    select {
+      width: 100%;
+      margin-top: 6px;
+      padding: 6px;
+      background: #0c1224;
+      color: #e8ecf3;
+      border: 1px solid #273058;
+      border-radius: 6px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #273058;
+      margin: 14px 0;
+    }
+
+    /* ===== ТАБЛИЦА ===== */
+    .table-wrap {
+      flex: 1;
+      background: #0e1424;
+      border-radius: 12px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #273058;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      min-width: 260px;
+    }
+
+    thead th {
+      background: #161d35;
+      font-weight: 600;
+      color: #cdd6ff;
+    }
+
+    .section td {
+      background: #0f1630;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .total td {
+      font-weight: 700;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Финансовая модель 2026</h1>
+
+<div class="layout">
+
+  <!-- ================= ЛЕВАЯ ПАНЕЛЬ ================= -->
+  <div class="panel">
+
+    <h3>WB</h3>
+
+    <label>Чек WB
+      <input type="range" id="wbPrice" min="500" max="5000" step="100" value="2000">
+    </label>
+
+    <label>Продажи WB / месяц
+      <input type="range" id="wbQty" min="1000" max="50000" step="1000" value="20000">
+    </label>
+
+    <label>Комиссия WB (%)
+      <input type="range" id="wbFee" min="0" max="50" step="1" value="31">
+    </label>
+
+    <label>Себестоимость WB (%)
+      <input type="range" id="wbCost" min="0" max="50" step="1" value="20">
+    </label>
+
+    <label>Реклама WB (%)
+      <input type="range" id="wbAds" min="0" max="30" step="1" value="10">
+    </label>
+
+    <hr>
+
+    <h3>Ozon</h3>
+
+    <label>Чек Ozon
+      <input type="range" id="ozPrice" min="500" max="5000" step="100" value="2500">
+    </label>
+
+    <label>Продажи Ozon / месяц
+      <input type="range" id="ozQty" min="1000" max="50000" step="1000" value="18000">
+    </label>
+
+    <label>Комиссия Ozon (%)
+      <input type="range" id="ozFee" min="0" max="50" step="1" value="37">
+    </label>
+
+    <label>Себестоимость Ozon (%)
+      <input type="range" id="ozCost" min="0" max="50" step="1" value="22">
+    </label>
+
+    <label>Реклама Ozon (%)
+      <input type="range" id="ozAds" min="0" max="30" step="1" value="12">
+    </label>
+
+    <hr>
+
+    <h3>Общие</h3>
+
+    <label>ФОТ / месяц
+      <input type="range" id="fot" min="0" max="3000000" step="50000" value="600000">
+    </label>
+
+    <label>Сценарий
+      <select id="scenario">
+        <option value="base">База</option>
+        <option value="opt">Оптимистичный</option>
+        <option value="stress">Стресс</option>
+      </select>
+    </label>
+
+  </div>
+
+  <!-- ================= ТАБЛИЦА ================= -->
+  <div class="table-wrap">
+    <table id="financeTable"></table>
+  </div>
+
+</div>
+
+<!-- ================= JS (БЕЗ MODULES) ================= -->
+<script src="calc.js"></script>
+<script src="render.js"></script>
+
+</body>
+</html>

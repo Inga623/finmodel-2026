@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Финансовая модель 2026</title>
+  <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+<h1>Финансовая модель 2026</h1>
+
+<div id="modelError" class="model-error no-print" style="display:none; margin:0 20px 12px; padding:12px; background:rgba(220,80,60,0.2); border:1px solid #dc503c; border-radius:8px; color:#ffb4a8;"></div>
+<div class="kpi-bar no-print">
+  <div class="kpi">
+    <div class="kpi-label">Выручка за год</div>
+    <div class="kpi-value" id="kpiRevenueTotal">—</div>
+    <div class="kpi-delta" id="kpiRevenueDelta"></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Чистая прибыль за год</div>
+    <div class="kpi-value" id="kpiNetTotal">—</div>
+    <div class="kpi-delta" id="kpiNetDelta"></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">ROS (рентабельность продаж)</div>
+    <div class="kpi-value" id="kpiROS">—</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Структура выручки</div>
+    <div class="kpi-value" id="kpiRevenueStructure" style="font-size:14px;">—</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ================= ЛЕВАЯ ПАНЕЛЬ ================= -->
+  <div class="panel">
+
+    <h3>WB</h3>
+
+    <label>Чек WB, ₽ <strong id="valWbPrice" class="panel-val">2 310</strong>
+      <input type="range" id="wbPrice" min="500" max="5000" step="100" value="2310">
+    </label>
+
+    <label>Заказы WB / месяц (база), шт. <strong id="valWbOrders" class="panel-val">21 100</strong>
+      <input type="range" id="wbOrders" min="1000" max="80000" step="1000" value="21100">
+    </label>
+    <label>Процент выкупа WB (%) <strong id="valWbBuyout" class="panel-val">100</strong>
+      <input type="range" id="wbBuyoutRate" min="50" max="100" step="1" value="100">
+    </label>
+
+    <label>Комиссия WB (%) <strong id="valWbFee" class="panel-val">30</strong>
+      <input type="range" id="wbFee" min="0" max="50" step="1" value="30">
+    </label>
+
+    <label>Себестоимость WB (%) <strong id="valWbCost" class="panel-val">15</strong>
+      <input type="range" id="wbCost" min="0" max="50" step="1" value="15">
+    </label>
+
+    <label>Реклама WB (%) <strong id="valWbAds" class="panel-val">12</strong>
+      <input type="range" id="wbAds" min="0" max="30" step="1" value="12">
+    </label>
+    <p style="font-size:11px;color:#9aa4c7;margin:4px 0 2px;">Реклама WB по месяцам (%)</p>
+    <div class="season-row">
+      <input type="number" id="wbAds0" step="0.5" min="0" max="50" placeholder="Янв" title="Янв">
+      <input type="number" id="wbAds1" step="0.5" min="0" max="50" title="Фев">
+      <input type="number" id="wbAds2" step="0.5" min="0" max="50" title="Мар">
+      <input type="number" id="wbAds3" step="0.5" min="0" max="50" title="Апр">
+      <input type="number" id="wbAds4" step="0.5" min="0" max="50" title="Май">
+      <input type="number" id="wbAds5" step="0.5" min="0" max="50" title="Июн">
+      <input type="number" id="wbAds6" step="0.5" min="0" max="50" title="Июл">
+      <input type="number" id="wbAds7" step="0.5" min="0" max="50" title="Авг">
+      <input type="number" id="wbAds8" step="0.5" min="0" max="50" title="Сен">
+      <input type="number" id="wbAds9" step="0.5" min="0" max="50" title="Окт">
+      <input type="number" id="wbAds10" step="0.5" min="0" max="50" title="Ноя">
+      <input type="number" id="wbAds11" step="0.5" min="0" max="50" title="Дек">
+    </div>
+
+    <label>Логистика WB (%) <strong id="valWbLogistics" class="panel-val">2</strong>
+      <input type="range" id="wbLogisticsPct" min="0" max="15" step="0.5" value="2">
+    </label>
+
+    <hr>
+
+    <h3>Ozon</h3>
+
+    <label>Чек Ozon, ₽ <strong id="valOzPrice" class="panel-val">3 200</strong>
+      <input type="range" id="ozPrice" min="500" max="5000" step="100" value="3200">
+    </label>
+
+    <label>Заказы Ozon / месяц (база), шт. <strong id="valOzOrders" class="panel-val">25 000</strong>
+      <input type="range" id="ozOrders" min="1000" max="80000" step="1000" value="25000">
+    </label>
+    <label>Процент выкупа Ozon (%) <strong id="valOzBuyout" class="panel-val">100</strong>
+      <input type="range" id="ozBuyoutRate" min="50" max="100" step="1" value="100">
+    </label>
+
+    <label>Комиссия Ozon (%) <strong id="valOzFee" class="panel-val">37</strong>
+      <input type="range" id="ozFee" min="0" max="50" step="1" value="37">
+    </label>
+
+    <label>Себестоимость Ozon (%) <strong id="valOzCost" class="panel-val">13</strong>
+      <input type="range" id="ozCost" min="0" max="50" step="1" value="13">
+    </label>
+
+    <label>Реклама Ozon (%) <strong id="valOzAds" class="panel-val">12</strong>
+      <input type="range" id="ozAds" min="0" max="30" step="1" value="12">
+    </label>
+    <p style="font-size:11px;color:#9aa4c7;margin:4px 0 2px;">Реклама Ozon по месяцам (%)</p>
+    <div class="season-row">
+      <input type="number" id="ozAds0" step="0.5" min="0" max="50" title="Янв">
+      <input type="number" id="ozAds1" step="0.5" min="0" max="50" title="Фев">
+      <input type="number" id="ozAds2" step="0.5" min="0" max="50" title="Мар">
+      <input type="number" id="ozAds3" step="0.5" min="0" max="50" title="Апр">
+      <input type="number" id="ozAds4" step="0.5" min="0" max="50" title="Май">
+      <input type="number" id="ozAds5" step="0.5" min="0" max="50" title="Июн">
+      <input type="number" id="ozAds6" step="0.5" min="0" max="50" title="Июл">
+      <input type="number" id="ozAds7" step="0.5" min="0" max="50" title="Авг">
+      <input type="number" id="ozAds8" step="0.5" min="0" max="50" title="Сен">
+      <input type="number" id="ozAds9" step="0.5" min="0" max="50" title="Окт">
+      <input type="number" id="ozAds10" step="0.5" min="0" max="50" title="Ноя">
+      <input type="number" id="ozAds11" step="0.5" min="0" max="50" title="Дек">
+    </div>
+
+    <label>Логистика Ozon (%) <strong id="valOzLogistics" class="panel-val">3</strong>
+      <input type="range" id="ozLogisticsPct" min="0" max="15" step="0.5" value="3">
+    </label>
+
+    <hr>
+    <h3>Сезонность (коэф. по месяцам)</h3>
+    <p style="font-size:11px;color:#9aa4c7;margin:0 0 6px;">WB</p>
+    <div class="season-row">
+      <input type="number" id="wbSeason0" step="0.01" min="0.1" max="2" value="0.65" title="Янв">
+      <input type="number" id="wbSeason1" step="0.01" min="0.1" max="2" value="0.71" title="Фев">
+      <input type="number" id="wbSeason2" step="0.01" min="0.1" max="2" value="0.70" title="Мар">
+      <input type="number" id="wbSeason3" step="0.01" min="0.1" max="2" value="0.55" title="Апр">
+      <input type="number" id="wbSeason4" step="0.01" min="0.1" max="2" value="0.50" title="Май">
+      <input type="number" id="wbSeason5" step="0.01" min="0.1" max="2" value="0.42" title="Июн">
+      <input type="number" id="wbSeason6" step="0.01" min="0.1" max="2" value="0.50" title="Июл">
+      <input type="number" id="wbSeason7" step="0.01" min="0.1" max="2" value="0.60" title="Авг">
+      <input type="number" id="wbSeason8" step="0.01" min="0.1" max="2" value="0.75" title="Сен">
+      <input type="number" id="wbSeason9" step="0.01" min="0.1" max="2" value="0.77" title="Окт">
+      <input type="number" id="wbSeason10" step="0.01" min="0.1" max="2" value="0.79" title="Ноя">
+      <input type="number" id="wbSeason11" step="0.01" min="0.1" max="2" value="1" title="Дек">
+    </div>
+    <p style="font-size:11px;color:#9aa4c7;margin:8px 0 6px;">Ozon</p>
+    <div class="season-row">
+      <input type="number" id="ozSeason0" step="0.01" min="0.1" max="2" value="0.76" title="Янв">
+      <input type="number" id="ozSeason1" step="0.01" min="0.1" max="2" value="0.63" title="Фев">
+      <input type="number" id="ozSeason2" step="0.01" min="0.1" max="2" value="0.59" title="Мар">
+      <input type="number" id="ozSeason3" step="0.01" min="0.1" max="2" value="0.54" title="Апр">
+      <input type="number" id="ozSeason4" step="0.01" min="0.1" max="2" value="0.50" title="Май">
+      <input type="number" id="ozSeason5" step="0.01" min="0.1" max="2" value="0.52" title="Июн">
+      <input type="number" id="ozSeason6" step="0.01" min="0.1" max="2" value="0.61" title="Июл">
+      <input type="number" id="ozSeason7" step="0.01" min="0.1" max="2" value="0.80" title="Авг">
+      <input type="number" id="ozSeason8" step="0.01" min="0.1" max="2" value="1.06" title="Сен">
+      <input type="number" id="ozSeason9" step="0.01" min="0.1" max="2" value="1.40" title="Окт">
+      <input type="number" id="ozSeason10" step="0.01" min="0.1" max="2" value="1.69" title="Ноя">
+      <input type="number" id="ozSeason11" step="0.01" min="0.1" max="2" value="1.80" title="Дек">
+    </div>
+
+    <hr>
+
+    <h3>Общие</h3>
+
+    <label>ФОТ / месяц, ₽ <strong id="valFot" class="panel-val">2 300 000</strong>
+      <input type="range" id="fot" min="0" max="5000000" step="50000" value="2300000">
+    </label>
+
+    <label>Прочие расходы / месяц, ₽ <strong id="valOtherOpex" class="panel-val">1 480 000</strong>
+      <input type="range" id="otherOpex" min="0" max="3000000" step="50000" value="1480000">
+    </label>
+
+    <hr>
+    <h3>Переменные расходы к выручке</h3>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">WB: <strong id="pctVarWb" class="panel-val">—</strong>%</p>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Ozon: <strong id="pctVarOz" class="panel-val">—</strong>%</p>
+    <hr>
+    <h3>Ликвидность</h3>
+    <label>Остаток кэша на начало года, ₽ <strong id="valOpeningCash" class="panel-val">16 181 932</strong>
+      <input type="number" id="openingCashBalance" min="0" step="100000" value="16181932" style="width:100%;padding:6px;margin-top:4px;background:#0c1224;color:#e8ecf3;border:1px solid #273058;border-radius:6px;box-sizing:border-box;">
+    </label>
+    <label>Приход в январе (выручка за дек. прошлого года), ₽ <strong id="valOpeningInflow" class="panel-val">0</strong>
+      <input type="number" id="openingInflow" min="0" step="100000" value="0" style="width:100%;padding:6px;margin-top:4px;background:#0c1224;color:#e8ecf3;border:1px solid #273058;border-radius:6px;box-sizing:border-box;">
+    </label>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Мин. остаток кэша за год: <strong id="valMinCash" class="panel-val">—</strong></p>
+    <p id="cashWarning" style="margin:4px 0;font-size:12px;color:#ff8a80;display:none;">Внимание: кассовый разрыв</p>
+    <hr>
+    <h3>Точка безубыточности</h3>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Месяц выхода в ноль: <strong id="valBepMonth" class="panel-val">—</strong></p>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Безубыточная выручка/мес.: <strong id="valBepRevenue" class="panel-val">—</strong></p>
+    <hr>
+    <h3>Итоги за год</h3>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Операционная прибыль: <strong id="valOpProfit" class="panel-val">—</strong></p>
+    <p style="margin:4px 0;font-size:13px;color:#9aa4c7;">Средняя маржинальность: <strong id="valAvgMargin" class="panel-val">—</strong></p>
+    <hr>
+
+    <label>УСН (%)
+      <select id="usnRate">
+        <option value="0.02">2%</option>
+        <option value="0.06" selected>6%</option>
+      </select>
+    </label>
+
+    <label>Лаг выручки (мес.)
+      <select id="revenueLag">
+        <option value="0">0</option>
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
+      </select>
+    </label>
+
+    <label>Сценарий
+      <select id="scenario">
+        <option value="base">База</option>
+        <option value="opt">Оптимистичный</option>
+        <option value="stress">Стресс</option>
+      </select>
+    </label>
+
+    <hr>
+    <h3>Сохранённые сценарии</h3>
+    <label>Название
+      <input type="text" id="scenarioName" placeholder="Имя сценария" style="width:100%;padding:6px;margin-top:4px;background:#0c1224;color:#e8ecf3;border:1px solid #273058;border-radius:6px;box-sizing:border-box;">
+    </label>
+    <button type="button" id="btnSaveScenario" style="margin-top:8px;width:100%;padding:8px;background:#273058;color:#e8ecf3;border:none;border-radius:6px;cursor:pointer;">Сохранить</button>
+    <label style="margin-top:10px;">Загрузить
+      <select id="loadScenario" style="width:100%;margin-top:4px;">
+        <option value="">— выберите —</option>
+      </select>
+    </label>
+
+  </div>
+
+  <!-- ================= ТАБЛИЦА ================= -->
+  <div class="table-wrap">
+    <div style="margin-bottom:8px;">
+      <label style="display:inline-flex;align-items:center;gap:8px;">
+        <span style="color:#9aa4c7;">Вид отчёта:</span>
+        <select id="reportView" style="width:auto;">
+          <option value="full">Полный</option>
+          <option value="owner">Для собственника</option>
+        </select>
+      </label>
+    </div>
+    <table id="financeTable"></table>
+  </div>
+
+</div>
+
+<div class="scenario-compare no-print" style="padding: 0 20px 16px;">
+  <h3 style="color:#4da3ff;font-size:16px;margin:0 0 8px;">Сравнение сценариев (итог за год)</h3>
+  <table id="scenarioTable" style="width:100%;max-width:520px;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
+    <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Показатель</th><th style="padding:8px;text-align:right;color:#cdd6ff;">База</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Оптимистичный</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Стресс</th></tr></thead>
+    <tbody id="scenarioTableBody"></tbody>
+  </table>
+</div>
+
+<div class="sensitivity-wrap no-print" style="padding: 0 20px 16px;">
+  <h3 style="color:#4da3ff;font-size:16px;margin:0 0 8px;">Чувствительность (итог за год)</h3>
+  <table id="sensitivityTable" style="width:100%;max-width:640px;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
+    <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Сценарий</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Выручка</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Чистая прибыль</th></tr></thead>
+    <tbody id="sensitivityTableBody"></tbody>
+  </table>
+</div>
+
+<div class="charts-wrap no-print" style="padding: 0 20px 20px; display: flex; flex-wrap: wrap; gap: 20px;">
+  <div style="flex: 1; min-width: 320px; max-width: 480px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
+    <canvas id="chartRevenue"></canvas>
+  </div>
+  <div style="flex: 1; min-width: 320px; max-width: 480px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
+    <canvas id="chartProfit"></canvas>
+  </div>
+  <div style="flex: 1; min-width: 280px; max-width: 360px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
+    <canvas id="chartStructure"></canvas>
+  </div>
+</div>
+
+<div class="no-print" style="padding: 0 20px 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+  <button type="button" id="btnExportCsv" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать CSV</button>
+  <button type="button" id="btnExportExcel" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать Excel</button>
+  <button type="button" id="btnPrint" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Печать</button>
+</div>
+
+<!-- ================= JS ================= -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="charts.js"></script>
+<script src="export.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

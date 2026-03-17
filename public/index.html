@@ -242,7 +242,53 @@
   </div>
 
   <!-- ================= ТАБЛИЦА ================= -->
-  <div class="table-wrap">
+  <div class="content-wrap">
+    <div class="tabs no-print">
+      <button type="button" class="tab-button tab-active" data-tab="dashboard">Дашборд</button>
+      <button type="button" class="tab-button" data-tab="report">Отчёт</button>
+    </div>
+    <div id="tab-dashboard" class="tab-content tab-content-active">
+      <div class="charts-wrap">
+        <div class="chart-card">
+          <canvas id="chartRevenue"></canvas>
+        </div>
+        <div class="chart-card">
+          <canvas id="chartProfit"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3 style="margin:0 0 6px;font-size:13px;color:#e5e7eb;">Структура выручки WB (переменные расходы)</h3>
+          <canvas id="chartStructureWb"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3 style="margin:0 0 6px;font-size:13px;color:#e5e7eb;">Структура выручки Ozon (переменные расходы)</h3>
+          <canvas id="chartStructureOz"></canvas>
+        </div>
+        <div class="chart-card">
+          <canvas id="chartCash"></canvas>
+        </div>
+      </div>
+
+      <div class="bottom-wrap no-print">
+        <div class="scenario-compare">
+          <h3 style="color:#4da3ff;font-size:16px;margin:0 0 8px;">Сравнение сценариев (итог за год)</h3>
+          <table id="scenarioTable" style="width:100%;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
+            <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Показатель</th><th style="padding:8px;text-align:right;color:#cdd6ff;">База</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Оптимистичный</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Стресс</th></tr></thead>
+            <tbody id="scenarioTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="sensitivity-wrap">
+          <h3 style="color:#4da3ff;font-size:16px;margin:16px 0 8px;">Чувствительность (итог за год)</h3>
+          <table id="sensitivityTable" style="width:100%;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
+            <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Сценарий</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Выручка</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Чистая прибыль</th></tr></thead>
+            <tbody id="sensitivityTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-report" class="tab-content">
+      <div class="table-wrap">
     <div style="margin-bottom:8px; display:flex; flex-wrap:wrap; gap:16px; align-items:center;">
       <label style="display:inline-flex;align-items:center;gap:8px;">
         <span style="color:#9aa4c7;">Вид отчёта:</span>
@@ -276,47 +322,16 @@
           <option value="toYearEnd">До конца года</option>
         </select>
       </label>
+      </div>
+      <table id="financeTable"></table>
+      <div class="no-print" style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button type="button" id="btnExportCsv" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать CSV</button>
+        <button type="button" id="btnExportExcel" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать Excel</button>
+        <button type="button" id="btnPrint" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Печать</button>
+      </div>
     </div>
-    <table id="financeTable"></table>
   </div>
 
-</div>
-
-<div class="scenario-compare no-print" style="padding: 0 20px 16px;">
-  <h3 style="color:#4da3ff;font-size:16px;margin:0 0 8px;">Сравнение сценариев (итог за год)</h3>
-  <table id="scenarioTable" style="width:100%;max-width:520px;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
-    <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Показатель</th><th style="padding:8px;text-align:right;color:#cdd6ff;">База</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Оптимистичный</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Стресс</th></tr></thead>
-    <tbody id="scenarioTableBody"></tbody>
-  </table>
-</div>
-
-<div class="sensitivity-wrap no-print" style="padding: 0 20px 16px;">
-  <h3 style="color:#4da3ff;font-size:16px;margin:0 0 8px;">Чувствительность (итог за год)</h3>
-  <table id="sensitivityTable" style="width:100%;max-width:640px;border-collapse:collapse;font-size:13px;background:#11172a;border-radius:8px;overflow:hidden;">
-    <thead><tr style="background:#161d35;"><th style="padding:8px;text-align:left;color:#cdd6ff;">Сценарий</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Выручка</th><th style="padding:8px;text-align:right;color:#cdd6ff;">Чистая прибыль</th></tr></thead>
-    <tbody id="sensitivityTableBody"></tbody>
-  </table>
-</div>
-
-<div class="charts-wrap no-print" style="padding: 0 20px 20px; display: flex; flex-wrap: wrap; gap: 20px;">
-  <div style="flex: 1; min-width: 320px; max-width: 480px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
-    <canvas id="chartRevenue"></canvas>
-  </div>
-  <div style="flex: 1; min-width: 320px; max-width: 480px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
-    <canvas id="chartProfit"></canvas>
-  </div>
-  <div style="flex: 1; min-width: 280px; max-width: 360px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
-    <canvas id="chartStructure"></canvas>
-  </div>
-  <div style="flex: 1; min-width: 320px; max-width: 480px; height: 260px; background: #11172a; border-radius: 12px; padding: 12px;">
-    <canvas id="chartCash"></canvas>
-  </div>
-</div>
-
-<div class="no-print" style="padding: 0 20px 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-  <button type="button" id="btnExportCsv" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать CSV</button>
-  <button type="button" id="btnExportExcel" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Скачать Excel</button>
-  <button type="button" id="btnPrint" style="padding: 8px 16px; background: #273058; color: #e8ecf3; border: none; border-radius: 6px; cursor: pointer;">Печать</button>
 </div>
 
 <!-- ================= JS ================= -->

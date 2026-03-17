@@ -55,10 +55,14 @@ h1 {
 }
 
 .panel {
-  width: 320px;
+  flex: 0 0 360px;
   background: #11172a;
   border-radius: 12px;
   padding: 16px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 120px;
+  align-self: flex-start;
 }
 
 .panel h3 {
@@ -123,12 +127,76 @@ hr {
   margin: 14px 0;
 }
 
-.table-wrap {
+.content-wrap {
   flex: 1;
   background: #0e1424;
   border-radius: 12px;
   padding: 16px;
+  min-width: 0; /* важно, чтобы горизонтальный скролл был внутри таблицы, а не у всей страницы */
+}
+
+.table-wrap {
+  background: transparent;
+  border-radius: 12px;
+  padding: 0;
   overflow-x: auto;
+}
+
+.charts-wrap {
+  padding: 0 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.chart-card {
+  flex: 0 0 calc(50% - 10px);
+  min-width: 320px;
+  height: 260px;
+  background: #11172a;
+  border-radius: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 20px 12px;
+}
+
+.tab-button {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #16a34a;
+  background: #052e16;
+  color: #bbf7d0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tab-button.tab-active {
+  background: #22c55e;
+  color: #022c22;
+  border-color: #22c55e;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content-active {
+  display: block;
+}
+
+.bottom-wrap {
+  padding: 0 20px 16px;
+}
+
+.scenario-compare,
+.sensitivity-wrap {
+  margin-bottom: 12px;
 }
 
 table {

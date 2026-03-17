@@ -30,5 +30,16 @@ document.querySelectorAll('input, select').forEach(el => {
 const reportViewEl = document.getElementById('reportView');
 if (reportViewEl) reportViewEl.addEventListener('change', render);
 
+// Переключение вкладок (дашборд / отчёт)
+document.querySelectorAll('.tab-button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.toggle('tab-active', b === btn));
+    document.querySelectorAll('.tab-content').forEach(c => {
+      c.classList.toggle('tab-content-active', c.id === 'tab-' + tab);
+    });
+  });
+});
+
 refreshScenariosList();
 render();

@@ -1,5 +1,5 @@
 (function() {
-  var chartRevenue, chartProfit, chartStructure, chartCash;
+  var chartRevenue, chartProfit, chartStructureWb, chartStructureOz, chartCash;
 
   var months = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
   var opts = {
@@ -29,8 +29,8 @@
         data: {
           labels: months,
           datasets: [
-            { label: 'Выручка WB', data: data.revenue.wb, backgroundColor: 'rgba(77, 163, 255, 0.7)', borderColor: '#4da3ff', borderWidth: 1 },
-            { label: 'Выручка Ozon', data: data.revenue.oz, backgroundColor: 'rgba(255, 180, 80, 0.7)', borderColor: '#ffb450', borderWidth: 1 }
+            { label: 'Выручка WB', data: data.revenue.wb, backgroundColor: 'rgba(147, 51, 234, 0.8)', borderColor: '#9333ea', borderWidth: 1 },
+            { label: 'Выручка Ozon', data: data.revenue.oz, backgroundColor: 'rgba(37, 99, 235, 0.8)', borderColor: '#2563eb', borderWidth: 1 }
           ]
         },
         options: Object.assign({}, opts, {
@@ -63,61 +63,140 @@
       });
     }
 
-    if (chartStructure) chartStructure.destroy();
-    var ctxStruct = document.getElementById('chartStructure');
-    if (ctxStruct && data.revenue && data.revenue.total) {
-      var totalRev = data.revenue.total.reduce(function(a, b) { return a + b; }, 0);
-      var totalVar = (data.variable.wb.total.reduce(function(a,b){return a+b;},0) + data.variable.oz.total.reduce(function(a,b){return a+b;},0));
-      var totalMargin = data.margin.total.reduce(function(a, b) { return a + b; }, 0);
-      var totalFot = (data.opex.fot && data.opex.fot.length) ? data.opex.fot.reduce(function(a,b){return a+b;},0) : 0;
-      var totalOther = (data.opex.otherOpex && data.opex.otherOpex.length) ? data.opex.otherOpex.reduce(function(a,b){return a+b;},0) : 0;
-      var totalUsn = (data.net.usn && data.net.usn.length) ? data.net.usn.reduce(function(a,b){return a+b;},0) : 0;
-      chartStructure = new Chart(ctxStruct, {
-        type: 'doughnut',
+    if (chartStructureWb) chartStructureWb.destroy();
+    if (chartStructureOz) chartStructureOz.destroy();
+    var ctxStructWb = document.getElementById('chartStructureWb');
+    var ctxStructOz = document.getElementById('chartStructureOz');
+    if (data.revenue && data.revenue.total && data.variable && ctxStructWb && ctxStructOz) {
+      var labels = data.months || months;
+
+      // WB breakdown
+      var wbCost = data.variable.wb.cost;
+      var wbFee = data.variable.wb.commission;
+      var wbLog = data.variable.wb.logistics;
+      var wbAds = data.variable.wb.ads;
+
+      chartStructureWb = new Chart(ctxStructWb, {
+        type: 'bar',
         data: {
-          labels: ['Маржа', 'ФОТ', 'Прочие', 'УСН', 'Переменные'],
-          datasets: [{
-            data: [
-              totalMargin,
-              totalFot,
-              totalOther,
-              totalUsn,
-              totalVar
-            ].map(function(v) { return Math.max(0, v); }),
-            backgroundColor: ['#6ee7b7', '#4da3ff', '#a78bfa', '#f87171', '#94a3b8'],
-            borderWidth: 0
-          }]
+          labels: labels,
+          datasets: [
+            { label: 'Себестоимость', data: wbCost, backgroundColor: 'rgba(147, 51, 234, 0.35)', stack: 'stack0' },
+            { label: 'Комиссия', data: wbFee, backgroundColor: 'rgba(147, 51, 234, 0.55)', stack: 'stack0' },
+            { label: 'Логистика', data: wbLog, backgroundColor: 'rgba(147, 51, 234, 0.75)', stack: 'stack0' },
+            { label: 'Реклама', data: wbAds, backgroundColor: 'rgba(147, 51, 234, 0.95)', stack: 'stack0' }
+          ]
         },
-        options: Object.assign({}, opts, { cutout: '55%' })
+        options: Object.assign({}, opts, {
+          scales: {
+            x: Object.assign({}, opts.scales.x, { stacked: true }),
+            y: {
+              stacked: true,
+              ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } })
+            }
+          }
+        })
+      });
+
+      // Ozon breakdown
+      var ozCost = data.variable.oz.cost;
+      var ozFee = data.variable.oz.commission;
+      var ozLog = data.variable.oz.logistics;
+      var ozAcq = data.variable.oz.acquiring;
+      var ozAds = data.variable.oz.ads;
+
+      chartStructureOz = new Chart(ctxStructOz, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Себестоимость', data: ozCost, backgroundColor: 'rgba(59, 130, 246, 0.9)', stack: 'stack0' },
+            { label: 'Комиссия', data: ozFee, backgroundColor: 'rgba(37, 99, 235, 0.9)', stack: 'stack0' },
+            { label: 'Логистика', data: ozLog, backgroundColor: 'rgba(129, 140, 248, 0.9)', stack: 'stack0' },
+            { label: 'Эквайринг', data: ozAcq, backgroundColor: 'rgba(191, 219, 254, 0.9)', stack: 'stack0' },
+            { label: 'Реклама', data: ozAds, backgroundColor: 'rgba(56, 189, 248, 0.9)', stack: 'stack0' }
+          ]
+        },
+        options: Object.assign({}, opts, {
+          scales: {
+            x: Object.assign({}, opts.scales.x, { stacked: true }),
+            y: {
+              stacked: true,
+              ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } })
+            }
+          }
+        })
       });
     }
 
     if (chartCash) chartCash.destroy();
     var ctxCash = document.getElementById('chartCash');
-    if (ctxCash && data.cash) {
-      var cashSeries = (data.cashFlow && data.cashFlow.closing && data.cashFlow.closing.length)
-        ? data.cashFlow.closing
-        : data.cash.balance;
-      var dividendsSeries = (data.dividends && Array.isArray(data.dividends.byMonth))
-        ? data.dividends.byMonth
-        : months.map(function() { return 0; });
+    if (ctxCash && data.margin && data.margin.wb && data.margin.oz) {
+      var labels = data.months || months;
+      var marginWb = data.margin.wb;
+      var marginOz = data.margin.oz;
+      var pctWb = data.margin.pct && data.margin.pct.wb ? data.margin.pct.wb : labels.map(function(){return 0;});
+      var pctOz = data.margin.pct && data.margin.pct.oz ? data.margin.pct.oz : labels.map(function(){return 0;});
+
       chartCash = new Chart(ctxCash, {
-        type: 'line',
         data: {
-          labels: months,
+          labels: labels,
           datasets: [
-            { label: 'Остаток денег', data: cashSeries, borderColor: '#4da3ff', backgroundColor: 'rgba(77, 163, 255, 0.1)', fill: true, tension: 0.2 },
-            { label: 'Дивиденды', data: dividendsSeries, borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0.2, yAxisID: 'y1' }
+            {
+              type: 'bar',
+              label: 'Маржинальная прибыль WB, ₽',
+              data: marginWb,
+              backgroundColor: 'rgba(147, 51, 234, 0.8)', // фиолетовый WB
+              borderColor: '#9333ea',
+              borderWidth: 1,
+              yAxisID: 'y'
+            },
+            {
+              type: 'bar',
+              label: 'Маржинальная прибыль Ozon, ₽',
+              data: marginOz,
+              backgroundColor: 'rgba(37, 99, 235, 0.8)', // синий Ozon
+              borderColor: '#2563eb',
+              borderWidth: 1,
+              yAxisID: 'y'
+            },
+            {
+              type: 'line',
+              label: 'Маржинальность WB, %',
+              data: pctWb,
+              borderColor: '#93c5fd',
+              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+              fill: false,
+              tension: 0.2,
+              yAxisID: 'y1'
+            },
+            {
+              type: 'line',
+              label: 'Маржинальность Ozon, %',
+              data: pctOz,
+              borderColor: '#facc15',
+              backgroundColor: 'rgba(250, 204, 21, 0.15)',
+              fill: false,
+              tension: 0.2,
+              yAxisID: 'y1'
+            }
           ]
         },
         options: Object.assign({}, opts, {
           scales: {
             x: opts.scales.x,
-            y: { ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } }) },
+            y: {
+              ticks: Object.assign({}, opts.scales.y.ticks, {
+                callback: function(v) { return fmt(v); }
+              })
+            },
             y1: {
               position: 'right',
               grid: { drawOnChartArea: false },
-              ticks: Object.assign({}, opts.scales.y.ticks, { callback: function(v) { return fmt(v); } })
+              ticks: {
+                color: '#9aa4c7',
+                callback: function(v) { return v + '%'; }
+              }
             }
           }
         })
